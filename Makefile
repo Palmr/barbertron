@@ -8,4 +8,8 @@ all: barberism.o
 
 barberism.o: src/barberism.cpp
 	${CXX} ${INCLUDE} -c src/barberism.cpp -o barberism.o
+
+clean:
+	rm barberism
+	rm barberism.o
   
