@@ -4,7 +4,7 @@ import cgi
 #import cgitb
 #cgitb.enable()
 
-import datetime
+from datetime import datetime
 inputs = cgi.FieldStorage()
 
 
