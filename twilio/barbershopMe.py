@@ -7,6 +7,9 @@ import cgi
 inputs = cgi.FieldStorage()
 
 
+with open("log_"+ str(datetime.now()) + ".log","w") as logFile:
+  logFile.write(str(inputs))
+
 
 # Parameters
 
