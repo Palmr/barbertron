@@ -8,4 +8,4 @@ cgitb.enable()
 form = cgi.FieldStorage()
 
 for k in form.keys():
-  print( "k: " + str(k) + "v: " + str(v))
+  print( "k: " + str(k) + "v: " + str(form[k]))
