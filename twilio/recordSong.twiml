@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-<Record action="http://86.6.44.109/barbershopMe.py" timeout="10" />
+	<Say>Sing away!</Say>
+	<Record action="http://86.6.44.109/music-hack-day/barbershopMe.py" timeout="10" />
 </Response>
