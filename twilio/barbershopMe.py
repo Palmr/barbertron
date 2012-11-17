@@ -9,7 +9,8 @@ inputs = cgi.FieldStorage()
 
 
 with open("/var/www/cgi-bin/music-hack-day/log_"+ str(datetime.now()) + ".log","w+") as logFile:
-  logFile.write(str(inputs))
+  logFile.write("HELLO ")
+  #logFile.write(str(inputs))
 
 
 # Parameters
