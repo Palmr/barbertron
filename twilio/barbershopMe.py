@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import cgi
+import urllib
 
 #import cgitb
 #cgitb.enable()
@@ -9,8 +10,8 @@ inputs = cgi.FieldStorage()
 
 
 with open("/var/www/cgi-bin/music-hack-day/log_"+ str(datetime.now()) + ".log","w+") as logFile:
-  logFile.write("HELLO ")
-  #logFile.write(str(inputs))
+  logFile.write("HEADERS:\n ")
+  logFile.write(str(inputs))
 
 
 # Parameters
