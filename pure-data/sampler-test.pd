@@ -1,0 +1,64 @@
+#N canvas 1 65 1278 734 10;
+#X obj 36 262 hip~ 5;
+#N canvas 0 0 450 300 (subpatch) 0;
+#X array sample-table 44104 float 0;
+#X coords 0 1.02 44103 -1.02 200 130 1;
+#X restore 585 20 graph;
+#X obj 36 230 tabread4~ sample-table;
+#X obj 36 195 line~;
+#X obj 36 146 * 441;
+#X floatatom -13 128 0 0 100 0 - - -;
+#X obj 36 170 pack 0 100;
+#X obj 405 235 loadbang;
+#X text 16 482 For more on reading and writing soundfiles to tables
+\, setting their lengths \, etc \, see "arrays" in the "control examples"
+series.;
+#X text 14 355 This patch introduces the "tabread4~" object \, which
+reads audio samples out of a floating-point array \, often called a
+"sample table." The input is the index of the sample to read \, counting
+from zero. The output is calculated using 4-point cubic interpolation
+\, which is adequate for most purposes. Because of the interpolation
+scheme \, tabread4~'s input cannot be less than one or greater than
+the table length minus two.;
+#X text 17 539 Fanatics take note: if you want really high-fidelity
+sampling \, use a high-quality resampling program to up-sample your
+soundfile to 88200 to drastically reduce interpolation error.;
+#X text 591 173 (one second plus three extra;
+#X text 593 192 for 4-point interpolation);
+#X text 385 304 message to read a soundfile into the table (automatically
+sent when you load this patch by the "loadbang" object.);
+#X text 596 589 updated for Pd version 0.33;
+#X text 584 151 --- 44103 samples ---;
+#X obj 405 284 soundfiler;
+#X msg 405 259 read ella.aiff sample-table;
+#X obj 35 294 dac~;
+#X obj 100 79 + 1;
+#X text 72 48;
+#X obj 40 31 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X msg 38 57 0;
+#X msg 64 33 stop;
+#X obj 38 79 float;
+#X obj 12 103 % 100;
+#X floatatom 209 112 5 0 0 0 - - -;
+#X obj 75 59 metro 50;
+#X text 93 36;
+#X connect 0 0 18 0;
+#X connect 0 0 18 1;
+#X connect 2 0 0 0;
+#X connect 3 0 2 0;
+#X connect 4 0 6 0;
+#X connect 5 0 4 0;
+#X connect 6 0 3 0;
+#X connect 7 0 17 0;
+#X connect 17 0 16 0;
+#X connect 19 0 25 0;
+#X connect 19 0 26 0;
+#X connect 19 0 24 1;
+#X connect 21 0 22 0;
+#X connect 21 0 27 0;
+#X connect 22 0 24 0;
+#X connect 23 0 27 0;
+#X connect 24 0 19 0;
+#X connect 25 0 5 0;
+#X connect 27 0 24 0;

@@ -1,4 +1,4 @@
-#N canvas 269 198 1920 1118 12;
+#N canvas 1 65 1278 344 12;
 #X floatatom 69 210 0 0 0 0 - - -;
 #X obj 521 641 *~;
 #X obj 644 457 line~;
@@ -39,7 +39,7 @@
 #X text 508 470 rotation freq;
 #X obj 522 700 vd~ G09-del;
 #X obj 735 695 vd~ G09-del;
-#X obj 255 94 delwrite~ G09-del 5000;
+#X obj 254 118 delwrite~ G09-del 5000;
 #X obj 204 12 adc~;
 #X obj 256 62 *~;
 #X floatatom 274 30 5 0 0 0 - - -;
@@ -53,6 +53,9 @@ then I added the fiddle~ and mtof to try and figure out the tone and
 roughly set the pitch shift amount relative to that to see if it followed
 in harmony...it was awful. Needs some maths up in this patch (Dan \,
 I'm looking at you);
+#X obj 135 465 hradio 15 1 0 8 empty empty empty 0 -8 0 10 -262144
+-1 -1 0;
+#X obj 170 102 vu 15 120 empty empty -1 -8 0 10 -66577 -1 1 0;
 #X connect 0 0 47 1;
 #X connect 1 0 9 0;
 #X connect 2 0 1 1;
