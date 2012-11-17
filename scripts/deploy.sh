@@ -1,2 +1,2 @@
-cp twilio/recordSong.twiml /var/www/music-hack-day/recordSong.twiml
-cp twilio/barbershopMe.py /var/www/music-hack-day/barbershopMe.py
+cp twilio/recordSong.twiml /var/www/html/music-hack-day/recordSong.twiml
+cp twilio/barbershopMe.py /var/www/html/music-hack-day/barbershopMe.py
