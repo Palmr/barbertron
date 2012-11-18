@@ -5,6 +5,7 @@ import time
 import random
 from twilio.rest import TwilioRestClient
 from barbershop import doBarberShopping
+from toSoundcloud import postSoundcloud
 
 ACCOUNT_SID = "AC4da27eb5c20276bef4fd14f5e8f8856b"
 AUTH_TOKEN = "044600f3d19bf476462555ee120cd7a5"
@@ -43,3 +44,8 @@ doBarberShopping(originalAudioFile, '../../html/'+barbershoppedAudioFile, barber
 playbackURL = baseURL + "/cgi-bin/music-hack-day/playback.py?file=" + baseURL + barbershoppedAudioFile
 call = client.calls.create(to=callerNumber, from_="+442071839808", url=playbackURL)
 
+# Upload to soundcloud
+soundcloudURL = postSoundcloud(barbershopID, barbershoppedAudioFile)
+
+message = client.sms.messages.create(to=callerNumber, from_="+442071839808",
+                                     body="Nice singing! " + soundcloudURL)
