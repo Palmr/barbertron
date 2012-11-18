@@ -5,7 +5,7 @@
 #define COMPILER_IS_GCC 1
 
 /* Target processor clips on negative float to int conversion. */
-#define CPU_CLIPS_NEGATIVE 1
+#define CPU_CLIPS_NEGATIVE 0
 
 /* Target processor clips on positive float to int conversion. */
 #define CPU_CLIPS_POSITIVE 0
@@ -41,7 +41,7 @@
 #define HAVE_ENDIAN_H 1
 
 /* Will be set to 1 if flac, ogg and vorbis are available. */
-#define HAVE_EXTERNAL_LIBS 1
+#define HAVE_EXTERNAL_LIBS 0
 
 /* Set to 1 if the compile supports the struct hack. */
 #define HAVE_FLEXIBLE_ARRAY 1
@@ -207,7 +207,7 @@
 #define PACKAGE_TARNAME "libsndfile"
 
 /* Define to the home page for this package. */
-#define PACKAGE_URL "http://www.mega-nerd.com/libsndfile/"
+/* #undef PACKAGE_URL */
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "1.0.25"
@@ -228,16 +228,16 @@
 #define SIZEOF_INT64_T 8
 
 /* The size of `loff_t', as computed by sizeof. */
-#define SIZEOF_LOFF_T 8
+/* #undef SIZEOF_LOFF_T */
 
 /* The size of `long', as computed by sizeof. */
-#define SIZEOF_LONG 4
+#define SIZEOF_LONG 8
 
 /* The size of `long long', as computed by sizeof. */
 #define SIZEOF_LONG_LONG 8
 
 /* The size of `off64_t', as computed by sizeof. */
-#define SIZEOF_OFF64_T 0
+/* #undef SIZEOF_OFF64_T */
 
 /* The size of `off_t', as computed by sizeof. */
 #define SIZEOF_OFF_T 8
@@ -249,13 +249,13 @@
 #define SIZEOF_SHORT 2
 
 /* The size of `size_t', as computed by sizeof. */
-#define SIZEOF_SIZE_T 4
+#define SIZEOF_SIZE_T 8
 
 /* The size of `ssize_t', as computed by sizeof. */
-#define SIZEOF_SSIZE_T 4
+#define SIZEOF_SSIZE_T 8
 
 /* The size of `void*', as computed by sizeof. */
-#define SIZEOF_VOIDP 4
+#define SIZEOF_VOIDP 8
 
 /* The size of `wchar_t', as computed by sizeof. */
 #define SIZEOF_WCHAR_T 4
@@ -279,10 +279,10 @@
 #define WORDS_BIGENDIAN 0
 
 /* Number of bits in a file offset, on hosts where this is settable. */
-#define _FILE_OFFSET_BITS 64
+/* #undef _FILE_OFFSET_BITS */
 
 /* Define to make fseeko etc. visible, on some hosts. */
-#define _LARGEFILE_SOURCE 1
+/* #undef _LARGEFILE_SOURCE */
 
 /* Define for large files, on AIX-style hosts. */
 /* #undef _LARGE_FILES */
