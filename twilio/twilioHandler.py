@@ -2,15 +2,18 @@
 import cgi
 import urllib
 
+from barbershop import doBarberShopping
+
 #import cgitb
 #cgitb.enable()
 
-from datetime import datetime
 inputs = cgi.FieldStorage()
 
 print("Content-type: text/plain\n\n")
 
-with open("/var/www/cgi-bin/music-hack-day/log_"+ str(datetime.now()) + ".log","w+") as logFile:
+barbershopID = "%i_%i" % (int(time.time() * 1e4), int(random.random() * 1e6))
+
+with open("/var/www/cgi-bin/music-hack-day/log_" + barbershopID + ".log","w+") as logFile:
   logFile.write("HEADERS:\n ")
   logFile.write(str(inputs))
 
@@ -21,7 +24,13 @@ with open("/var/www/cgi-bin/music-hack-day/log_"+ str(datetime.now()) + ".log","
 
 audioURL = str(inputs['RecordingUrl'].value)
 
-localAudioFile = "testAudio_" + str(datetime.now()).replace(' ', '_') + ".wav"
-urllib.urlretrieve(audioURL, localAudioFile)
+localAudioInputFile = "audioInput_" + barbershopID + ".wav"
+localAudioOutputFile = "audioOutput_" + barbershopID + ".wav"
+
+urllib.urlretrieve(audioURL, localAudioInputFile)
 
 print ("Retrieved " + audioURL + "\n")
+
+doBarberShopping(localAudioInputFile, localAudioOutputFile)
+
+print("Processed; saved to " + localAudioOutputFile)
