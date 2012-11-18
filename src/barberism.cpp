@@ -4,22 +4,23 @@ extern "C"
 }
 
 #include <iostream>
+#include <string>
+#include <sndfile.h>
+#include <cmath>
 
-/*
-void pdprint(const char *s) {
-  printf("%s", s);
+void pd_printCallback(const char *s) {
+  std::cout << s;
 }
 
-void pdnoteon(int ch, int pitch, int vel) {
-  printf("noteon: %d %d %d\n", ch, pitch, vel);
+void pd_noteOnCallback(int ch, int pitch, int vel) {
+  std::cout << ch << ", " <<  pitch << ", " << vel << std::endl;
 }
-*/
 
 int main(int argc, char *argv[])
 {
   std::cout << "Hello world" << std::endl;
 
-  if (argc < 4) {
+  if (argc < 5) {
     std::cerr << "Usage: " << argv[0] << " patch.pd audio.wav controlData.txt" << std::endl;
     return -1;
   }
@@ -27,18 +28,76 @@ int main(int argc, char *argv[])
   std::string pdPatch(argv[1]);
   std::string audioInput(argv[2]);
   std::string controlFile(argv[3]);
+  std::string audioOutput(argv[4]);
 
   std::cout << "USING PD PATCH: " << pdPatch << std::endl;
   std::cout << "LOADING AUDIO FILE: " << audioInput << std::endl;
   std::cout << "LOADING BARBERISM INSTRUCTIONS: " << controlFile << std::endl;
+  std::cout << "WRITING TO AUDIO FILE: " << audioOutput << std::endl;
 
+  size_t dirCharIndex = pdPatch.rfind('/');
+  if (dirCharIndex == pdPatch.npos)
+  {
+    std::cerr << "Invalid pdPatch path" << std::endl;
+    return -1;
+  }
+  std::string pdPatchDir = pdPatch.substr(0, dirCharIndex);
+  std::string pdPatchFile = pdPatch.substr(dirCharIndex+1);
+
+  SNDFILE *audioInputFileHandle;
+  SF_INFO inputFormat;
+  audioInputFileHandle = sf_open(audioInput.c_str(), SFM_READ, &inputFormat);
+  if (NULL == audioInputFileHandle)
+  {
+    std::cerr << "Failed to load audio file." << std::endl;
+    std::cerr << sf_strerror(NULL) << std::endl;
+    return -1;
+  }
+  int sampleRate = inputFormat.samplerate;
+  long frameCount = inputFormat.frames;
+  int channels = inputFormat.channels;
+
+  SF_INFO outputFormat;
+  outputFormat.samplerate = sampleRate;
+  outputFormat.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+  outputFormat.channels = channels;
+  SNDFILE *audioOutputFileHandle = sf_open(audioOutput.c_str(), SFM_WRITE, &outputFormat);
+  if (NULL == audioOutputFileHandle)
+  {
+    std::cerr << "Failed to open output audio file for writing." << std::endl;
+    std::cerr << sf_strerror(NULL) << std::endl;
+    return -1;
+  }
+
+  std::cout << "SAMPLE RATE: " << sampleRate << std::endl;
+  std::cout << "FRAME COUNT: " << frameCount << std::endl;
+  std::cout << "CHANNEL COUNT: " << channels << std::endl;
+
+  if (channels != 1)
+  {
+    std::cerr << "Multiple channels are not supported" << std::endl;
+    return -1;
+  }
+
+  float *audioInData = new float[frameCount*channels];
+  int samplesRead = sf_readf_float(audioInputFileHandle, audioInData, frameCount);
+
+  std::cout << "Successfully read " << samplesRead << " frames into temp memory" << std::endl;
+
+  if (sf_close(audioInputFileHandle) != 0)
+  {
+    std::cerr << "Error closing file" << std::endl;
+  }
+
+  std::cout << "INITIALISE PURE DATA" << std::endl;
   // init pd
-  int srate = 44100;
-  //libpd_printhook = (t_libpd_printhook) pdprint;
-  //libpd_noteonhook = (t_libpd_noteonhook) pdnoteon;
+  libpd_printhook = (t_libpd_printhook) pd_printCallback;
+  libpd_noteonhook = (t_libpd_noteonhook) pd_noteOnCallback;
   libpd_init();
-  libpd_init_audio(1, 2, srate);
-  float inbuf[64], outbuf[128];  // one input channel, two output channels
+  libpd_init_audio(1, 1, sampleRate);
+  const int ticks = 4;
+  long blockSize = libpd_blocksize() * ticks;
+  float inbuf[blockSize], outbuf[blockSize];  // one input channel, two output channels
                                  // block size 64, one tick per buffer
 
   // compute audio    [; pd dsp 1(
@@ -47,14 +106,42 @@ int main(int argc, char *argv[])
   libpd_finish_message("pd", "dsp");
 
   // open patch       [; pd open file folder(
-  libpd_openfile(argv[1], argv[2]);
+  libpd_openfile(pdPatchFile.c_str(), pdPatchDir.c_str());
 
-  // now run pd for ten seconds (logical time)
-  int i;
-  for (i = 0; i < 10 * srate / 64; i++) {
-    // fill inbuf here
-    libpd_process_float(1, inbuf, outbuf);
+  std::cout << "PROCESSING DATA" << std::endl;
+  int frameIndex = 0;
+  std::cout << "TOTAL SAMPLES : " << frameCount << std::endl;
+  while (frameIndex < frameCount * channels / blockSize)
+  {
+    std::cout << "FRAME : " << frameIndex << std::endl;
+    long thisBlockFrames = std::min(blockSize, frameCount - frameIndex * blockSize);
+
+    // Fill PD input buffer
+    for (int i = 0; i < thisBlockFrames; ++i)
+    {
+      inbuf[i] = audioInData[frameIndex * blockSize + i];
+    }
+
+    libpd_process_float(ticks, inbuf, outbuf);
+
     // use outbuf here
+    //for (int i = 0; i < thisBlockFrames; ++i)
+    //{
+    sf_count_t framesWritten = sf_writef_float(audioOutputFileHandle, outbuf, thisBlockFrames) ;
+    float max = 0;
+    for (int i = 0; i < thisBlockFrames; ++i)
+    {
+      max = std::max(max, outbuf[i]);
+    }
+    std::cout << "Wrote " << framesWritten << " frames" << ", max " << max << std::endl;
+    //}
+    frameIndex ++;
+  }
+  std::cout << "FINISHED, CLEANING UP" << std::endl;
+  delete[] audioInData;
+  if (sf_close(audioOutputFileHandle) != 0)
+  {
+    std::cerr << "Error closing output file" << std::endl;
   }
 
   return 0;
