@@ -12,7 +12,7 @@ client = Client(client_id=appID,
 # print the username of the authorized user
 print client.get('/me').username
 
-def postBarbershop(barbershopID, audioPath):
+def postSoundcloud(barbershopID, audioPath):
 
   track = client.post('/tracks', track={
       'title': "BARBERSHOP'D " + str(barbershopID),
@@ -28,4 +28,4 @@ def postBarbershop(barbershopID, audioPath):
   return soundcloudURL
 
 if __name__ == '__main__':
-  postBarbershop("TESTID", "../audioOutput.wav")
+  postSoundcloud("TESTID", "../audioOutput.wav")
