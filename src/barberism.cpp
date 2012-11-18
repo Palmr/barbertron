@@ -3,6 +3,8 @@ extern "C"
 #include <z_libpd.h>
 }
 
+#include <deque>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <sndfile.h>
@@ -14,6 +16,25 @@ void pd_printCallback(const char *s) {
 
 void pd_noteOnCallback(int ch, int pitch, int vel) {
   std::cout << ch << ", " <<  pitch << ", " << vel << std::endl;
+}
+
+struct NoteOn {
+  float time;
+  int pitch;
+  int velocity;
+};
+
+int readControlFile(const std::string &controlFilePath, std::deque<NoteOn> & noteOnSignals)
+{
+  std::ifstream inFile(controlFilePath.c_str());
+
+  NoteOn noteOn;
+  while( inFile >> noteOn.time >> noteOn.pitch >> noteOn.velocity )
+  {
+    noteOnSignals.push_back(noteOn);
+  }
+
+  return 0;
 }
 
 int main(int argc, char *argv[])
@@ -34,6 +55,9 @@ int main(int argc, char *argv[])
   std::cout << "LOADING AUDIO FILE: " << audioInput << std::endl;
   std::cout << "LOADING BARBERISM INSTRUCTIONS: " << controlFile << std::endl;
   std::cout << "WRITING TO AUDIO FILE: " << audioOutput << std::endl;
+
+  std::deque<NoteOn> noteOnSignals;
+  readControlFile(controlFile, noteOnSignals);
 
   size_t dirCharIndex = pdPatch.rfind('/');
   if (dirCharIndex == pdPatch.npos)
@@ -90,15 +114,13 @@ int main(int argc, char *argv[])
   }
 
   std::cout << "INITIALISE PURE DATA" << std::endl;
-  // init pd
   libpd_printhook = (t_libpd_printhook) pd_printCallback;
   libpd_noteonhook = (t_libpd_noteonhook) pd_noteOnCallback;
   libpd_init();
   libpd_init_audio(1, 1, sampleRate);
   const int ticks = 4;
   long blockSize = libpd_blocksize() * ticks;
-  float inbuf[blockSize], outbuf[blockSize];  // one input channel, two output channels
-                                 // block size 64, one tick per buffer
+  float inbuf[blockSize], outbuf[blockSize];
 
   // compute audio    [; pd dsp 1(
   libpd_start_message(1); // one entry in list
@@ -107,6 +129,18 @@ int main(int argc, char *argv[])
 
   // open patch       [; pd open file folder(
   libpd_openfile(pdPatchFile.c_str(), pdPatchDir.c_str());
+  int midiChannel = 1;
+  int pitch = 67;
+  int velocity = 100;
+  if (0 != libpd_noteon(midiChannel, pitch, velocity))
+  {
+    std::cout << "Failed to send MIDI data to PD." << std::endl;
+  }
+  pitch = 76;
+  if (0 != libpd_noteon(midiChannel, pitch, velocity))
+  {
+    std::cout << "Failed to send MIDI data to PD." << std::endl;
+  }
 
   std::cout << "PROCESSING DATA" << std::endl;
   int frameIndex = 0;
@@ -122,11 +156,24 @@ int main(int argc, char *argv[])
       inbuf[i] = audioInData[frameIndex * blockSize + i];
     }
 
+    if (noteOnSignals.size() && noteOnSignals[0].time < frameIndex * blockSize / (float)sampleRate)
+    {
+      const NoteOn &noteOn = noteOnSignals[0];
+      if (0 != libpd_noteon(midiChannel, noteOn.pitch, noteOn.velocity))
+      {
+        std::cout << "Failed to send MIDI data to PD." << std::endl;
+      }
+      else
+      {
+        std::cout << "Sent MIDI data to PD: " << noteOn.pitch << " " << noteOn.velocity << std::endl;
+      }
+      noteOnSignals.pop_front();
+
+    }
+
     libpd_process_float(ticks, inbuf, outbuf);
 
     // use outbuf here
-    //for (int i = 0; i < thisBlockFrames; ++i)
-    //{
     sf_count_t framesWritten = sf_writef_float(audioOutputFileHandle, outbuf, thisBlockFrames) ;
     float max = 0;
     for (int i = 0; i < thisBlockFrames; ++i)
@@ -134,7 +181,6 @@ int main(int argc, char *argv[])
       max = std::max(max, outbuf[i]);
     }
     std::cout << "Wrote " << framesWritten << " frames" << ", max " << max << std::endl;
-    //}
     frameIndex ++;
   }
   std::cout << "FINISHED, CLEANING UP" << std::endl;
