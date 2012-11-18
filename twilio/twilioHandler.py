@@ -45,7 +45,7 @@ playbackURL = baseURL + "/cgi-bin/music-hack-day/playback.py?file=" + baseURL + 
 call = client.calls.create(to=callerNumber, from_="+442071839808", url=playbackURL)
 
 # Upload to soundcloud
-soundcloudURL = postSoundcloud(barbershopID, barbershoppedAudioFile)
+soundcloudURL = postSoundcloud(barbershopID, "../../html/" + barbershoppedAudioFile)
 
 message = client.sms.messages.create(to=callerNumber, from_="+442071839808",
                                      body="Nice singing! " + soundcloudURL)
