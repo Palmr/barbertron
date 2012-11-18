@@ -107,6 +107,18 @@ int main(int argc, char *argv[])
 
   // open patch       [; pd open file folder(
   libpd_openfile(pdPatchFile.c_str(), pdPatchDir.c_str());
+  int midiChannel = 1;
+  int pitch = 67;
+  int velocity = 100;
+  if (0 != libpd_noteon(midiChannel, pitch, velocity))
+  {
+    std::cout << "Failed to send MIDI data to PD." << std::endl;
+  }
+  pitch = 76;
+  if (0 != libpd_noteon(midiChannel, pitch, velocity))
+  {
+    std::cout << "Failed to send MIDI data to PD." << std::endl;
+  }
 
   std::cout << "PROCESSING DATA" << std::endl;
   int frameIndex = 0;
@@ -125,8 +137,6 @@ int main(int argc, char *argv[])
     libpd_process_float(ticks, inbuf, outbuf);
 
     // use outbuf here
-    //for (int i = 0; i < thisBlockFrames; ++i)
-    //{
     sf_count_t framesWritten = sf_writef_float(audioOutputFileHandle, outbuf, thisBlockFrames) ;
     float max = 0;
     for (int i = 0; i < thisBlockFrames; ++i)
@@ -134,7 +144,6 @@ int main(int argc, char *argv[])
       max = std::max(max, outbuf[i]);
     }
     std::cout << "Wrote " << framesWritten << " frames" << ", max " << max << std::endl;
-    //}
     frameIndex ++;
   }
   std::cout << "FINISHED, CLEANING UP" << std::endl;
