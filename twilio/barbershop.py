@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os
+import subprocess
 from pyechonest import config,track
 
 config.ECHO_NEST_API_KEY="VZK0SNBGSEUD84U8S"
@@ -15,12 +15,15 @@ def generateControlFile(inputFile):
   
   # generate chord progression
   with open(controlFilename, "w+") as controlFile:
-    controlFile.write("Some series of notes based of the key/seconds/bar count...\n")
+
+    # test, go up in whole tones
+    for t in xrange(0,10):
+      controlFile.write("%f %i %i\n" % (t/2.0, 64 + 2 * t, 127 ))
   
   return controlFilename
 
 
 def doBarberShopping(inputFile, outputFile):
-  controlFilename = generateControlFile()
-  os.system("barberism patch.pd " + inputFile + " " + controlFilename + " " + outputFile)
+  controlFilename = generateControlFile(inputFile)
+  subprocess.call(["./barberism", "patch.pd", inputFile, controlFilename, outputFile])
 

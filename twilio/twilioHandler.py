@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 import cgi
 import urllib
-from datetime import datetime
+from barbershop import doBarberShopping
 
 inputs = cgi.FieldStorage()
 
-baseURL = "http://86.6.44.109/cgi-bin/music-hack-day/";
-timestampNow = str(datetime.now()).replace(' ', '_')
-originalAudioFile = "originalAudio_" + timestampNow + ".wav"
-barbershoppedAudioFile = "barbershoppedAudio_" + timestampNow + ".wav"
+baseURL = "http://86.6.44.109/";
+barbershopID = "%i_%i" % (int(time.time() * 1e4), int(random.random() * 1e6))
+originalAudioFile = "originalAudio_" + barbershopID + ".wav"
+barbershoppedAudioFile = "barbershoppedAudio_" + barbershopID + ".wav"
 
 print("Content-type: text/plain\n\n")
 
-with open("/var/www/cgi-bin/music-hack-day/log_"+ timestampNow + ".log","w+") as logFile:
+with open("/var/www/cgi-bin/music-hack-day/log_" + barbershopID + ".log","w+") as logFile:
   logFile.write("HEADERS:\n ")
   logFile.write(str(inputs))
 
@@ -29,9 +29,9 @@ callerNumber = str(inputs['Caller'].value)
 urllib.urlretrieve(audioURL, originalAudioFile)
 
 # Do-barbershopping
-# doBarberShopping(originalAudioFile, barbershoppedAudioFile)
+doBarberShopping(originalAudioFile, '../../html/'+barbershoppedAudioFile)
 
 # Post response back to twilio
 # respond with the xml pointing barbershoppedAudioFile back to the original number that called
-playbackURL = baseURL + "playback.py?file=" + barbershoppedAudioFile
-
+playbackURL = baseURL + "playback.py?file=" + baseURL + barbershoppedAudioFile
+# post to the call method passing our number, callerNumber and the playbackURL
