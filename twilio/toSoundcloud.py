@@ -10,7 +10,7 @@ client = Client(client_id=appID,
                            password='haj8nalP')
 
 # print the username of the authorized user
-print client.get('/me').username
+# print client.get('/me').username
 
 def postSoundcloud(barbershopID, audioPath):
 
@@ -20,10 +20,10 @@ def postSoundcloud(barbershopID, audioPath):
       'asset_data': open(audioPath, 'rb')
       })
 
-  print track.title
-  soundcloudURL = track.url
+  #print track.title
+  soundcloudURL = track.permalink_url
 
-  print soundcloudURL
+  #print soundcloudURL
 
   return soundcloudURL
 
