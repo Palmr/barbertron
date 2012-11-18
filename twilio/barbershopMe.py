@@ -20,7 +20,7 @@ with open("/var/www/cgi-bin/music-hack-day/log_"+ str(datetime.now()) + ".log","
 # RecordingDuration 	the duration of the recorded audio (in seconds)
 # Digits 	the key (if any) pressed to end the recording or 'hangup' if the caller hung up
 
-audioURL = str(nputs['RecordingUrl'])
+audioURL = str(inputs['RecordingUrl'])
 
 localAudioFile = "testAudio_" + str(datetime.now()) + ".wav"
 urllib.urlretrieve(audioURL, localAudioFile)
