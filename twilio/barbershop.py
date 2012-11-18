@@ -8,8 +8,8 @@ def generateControlFile(inputFile, barbershopID):
   controlFilename = "control-"+ barbershopID + ".txt"
   
   uploadedTrack = track.track_from_filename(inputFile)
-  audioKey = uploadedTrack.key - 6
-  audioKeyConfidence = uploadedTrack.key_confidence
+  key_offset = uploadedTrack.key - 6
+  #audioKeyConfidence = uploadedTrack.key_confidence
   #audioBarCount = uploadedTrack.bars.count()
   
   # generate chord progression
@@ -17,9 +17,9 @@ def generateControlFile(inputFile, barbershopID):
 
     # test, go up in whole tones
     for t in xrange(1,4):
-      controlFile.write("%f %i %i\n" % (t*2.0, key + 54 + 3 * t, 117 ))
-      controlFile.write("%f %i %i\n" % (t*2.0, key + 59 + 3 * t, 117 ))
-      controlFile.write("%f %i %i\n" % (t*2.0, key + 64 + 3 * t, 117 ))
+      controlFile.write("%f %i %i\n" % (t*2.0, key_offset + 54 + 3 * t, 117 ))
+      controlFile.write("%f %i %i\n" % (t*2.0, key_offset + 59 + 3 * t, 117 ))
+      controlFile.write("%f %i %i\n" % (t*2.0, key_offset + 64 + 3 * t, 117 ))
   
   return controlFilename
 
