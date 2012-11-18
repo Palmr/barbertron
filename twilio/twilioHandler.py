@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 import cgi
 import urllib
+from twilio.rest import TwilioRestClient
 from barbershop import doBarberShopping
+
+ACCOUNT_SID = "AC4da27eb5c20276bef4fd14f5e8f8856b"
+AUTH_TOKEN = "044600f3d19bf476462555ee120cd7a5"
+client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 
 inputs = cgi.FieldStorage()
 
@@ -33,5 +38,6 @@ doBarberShopping(originalAudioFile, '../../html/'+barbershoppedAudioFile)
 
 # Post response back to twilio
 # respond with the xml pointing barbershoppedAudioFile back to the original number that called
-playbackURL = baseURL + "playback.py?file=" + baseURL + barbershoppedAudioFile
-# post to the call method passing our number, callerNumber and the playbackURL
+playbackURL = baseURL + "/cgi-bin/music-hack-day/playback.py?file=" + baseURL + barbershoppedAudioFile
+call = client.calls.create(to=callerNumber, from_="+442071839808", url=playbackURL)
+
