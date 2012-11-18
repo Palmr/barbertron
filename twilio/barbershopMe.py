@@ -21,7 +21,7 @@ with open("/var/www/cgi-bin/music-hack-day/log_"+ str(datetime.now()) + ".log","
 
 audioURL = str(inputs['RecordingUrl'].value)
 
-localAudioFile = "testAudio_" + str(datetime.now()) + ".wav"
+localAudioFile = "testAudio_" + str(datetime.now()).replace(' ', '_') + ".wav"
 urllib.urlretrieve(audioURL, localAudioFile)
 
 print ("Retrieved " + audioURL + "\n")
