@@ -1,7 +1,8 @@
 CXX := g++ -Wall -ggdb
 
-INCLUDE := -Ilib/libpd/pure-data/src -Ilib/libpd/libpd_wrapper -O3
-LIB := lib/libpd/libs/libpd.so
+INCLUDE := -Ilib/libpd/pure-data/src -Ilib/libpd/libpd_wrapper `pkg-config --cflags sndfile`
+LIB := lib/libpd/libs/libpd.so `pkg-config --libs sndfile`
+
 
 all: barberism.o
 	${CXX} -o barberism ${LIB} barberism.o 
