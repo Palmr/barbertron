@@ -2,3 +2,6 @@
 barberism
 barberism.o
 *.o
+*.Plo
+autom4te.cache
+*.wav
