@@ -4,14 +4,13 @@ from pyechonest import config,track
 
 config.ECHO_NEST_API_KEY="VZK0SNBGSEUD84U8S"
 
-def generateControlFile(inputFile):
-  controlFilename = "control-"+ str(datetime.now()) + ".txt"
+def generateControlFile(inputFile, barbershopID):
+  controlFilename = "control-"+ barbershopID + ".txt"
   
-  uploadedTrack = track.track_from_filename(filePath)
+  uploadedTrack = track.track_from_filename(inputFile)
   audioKey = uploadedTrack.key
   audioKeyConfidence = uploadedTrack.key_confidence
-  audioLength = uploadedTrack.seconds
-  audioBarCount = uploadedTrack.bars.count()
+  #audioBarCount = uploadedTrack.bars.count()
   
   # generate chord progression
   with open(controlFilename, "w+") as controlFile:
@@ -23,7 +22,7 @@ def generateControlFile(inputFile):
   return controlFilename
 
 
-def doBarberShopping(inputFile, outputFile):
-  controlFilename = generateControlFile(inputFile)
+def doBarberShopping(inputFile, outputFile, barbershopID):
+  controlFilename = generateControlFile(inputFile, barbershopID)
   subprocess.call(["./barberism", "patch.pd", inputFile, controlFilename, outputFile])
 
