@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import subprocess
 from pyechonest import config,track
+from secrets import echoNestSecrets
 
-config.ECHO_NEST_API_KEY="VZK0SNBGSEUD84U8S"
+config.ECHO_NEST_API_KEY = echoNestSecrets['API_KEY']
 
 def generateControlFile(inputFile, barbershopID):
   controlFilename = "control-"+ barbershopID + ".txt"

@@ -5,3 +5,5 @@ barberism.o
 *.Plo
 autom4te.cache
 *.wav
+*.pyc
+secrets.py
