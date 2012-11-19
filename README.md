@@ -7,6 +7,8 @@ There's a live version where you only need a laptop, Pure Data, a microphone and
 
 # Using
 - Pure Data to do the 4 voiced barbershop effect
+- C++ and [libpd](http://libpd.cc/) to auto-barbershop phone calls
 - The Echo Nest to analyse how best to harmonise your phoned in song
 - Twilio to deal with phoning in a song
 - Soundcloud to store those sweet harmonies in your phoned in barbershop songs
+
