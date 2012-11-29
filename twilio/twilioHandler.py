@@ -50,13 +50,13 @@ try:
 	twilioSMS = twilioClient.sms.messages.create( to=callerNumber, from_=twilioSecrets['PHONE_NUMBER'], body="Nice singing! " + soundcloudURL)
 	logger.log('Sending soundcloud link via SMS to (' + callerNumber + ') from (' + twilioSecrets['PHONE_NUMBER'] + ')')
 
-	print('Content-type: text/plain\n\n')
+	print('Content-type: text/plain\n')
 	print('Recording barbershopped :)')
 except:
 	logger = BarberLogging(logFile, 'twilioHandler.py - Error')
 	logger.log(traceback.format_exc())
 
-	print('Content-type: text/plain\n\n')
+	print('Content-type: text/plain\n')
 	print('Error:\n')
 	print(traceback.format_exc())
 

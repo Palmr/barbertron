@@ -11,12 +11,12 @@ try:
 	logger = BarberLogging('log_playback.log', 'playback.py')
 	logger.log(twimlResponse)
 
-	print('Content-type: text/xml\n\n')
+	print('Content-type: text/xml\n')
 	print(twimlResponse)
 except:
 	logger = BarberLogging('log_playback.log', 'playback.py - Error')
 	logger.log(traceback.format_exc())
 
-	print('Content-type: text/plain\n\n')
+	print('Content-type: text/plain\n')
 	print('Error:\n')
 	print(traceback.format_exc())
